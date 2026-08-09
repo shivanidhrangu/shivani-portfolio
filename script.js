@@ -88,35 +88,38 @@ revealElements.forEach(el => {
 });
 
 // ==========================================================================
-//   FORM SUBMISSION HANDLER
+//   FORM SUBMISSION HANDLER (AJAX FORMSPREE)
 // ==========================================================================
-const contactForm = document.getElementById('contactForm');
+const contactForm = document.getElementById('contact-form');
+const formStatus = document.getElementById('form-status');
 
 if (contactForm) {
-    contactForm.addEventListener('submit', (e) => {
-        e.preventDefault();
+    contactForm.addEventListener('submit', async function(event) {
+        event.preventDefault(); // Ye redirect rokega
         
-        // Simulating submission state
-        const btn = contactForm.querySelector('button');
-        const originalText = btn.innerHTML;
-        
-        btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Sending...';
-        btn.style.opacity = '0.8';
-        btn.disabled = true;
+        formStatus.innerHTML = "Sending message...";
+        formStatus.style.color = "#007BFF";
 
-        // Mock API Call Delay
-        setTimeout(() => {
-            btn.innerHTML = '<i class="fa-solid fa-check"></i> Message Sent!';
-            btn.style.background = '#10B981'; // Success Green
-            contactForm.reset();
+        try {
+            const response = await fetch(contactForm.action, {
+                method: contactForm.method,
+                body: new FormData(contactForm),
+                headers: {
+                    'Accept': 'application/json'
+                }
+            });
 
-            // Reset button after 3 seconds
-            setTimeout(() => {
-                btn.innerHTML = originalText;
-                btn.style.background = '';
-                btn.style.opacity = '1';
-                btn.disabled = false;
-            }, 3000);
-        }, 1500);
+            if (response.ok) {
+                formStatus.innerHTML = "✅ Message sent successfully! I'll get back to you soon.";
+                formStatus.style.color = "#28a745";
+                contactForm.reset();
+            } else {
+                formStatus.innerHTML = "❌ Oops! Something went wrong. Please try again.";
+                formStatus.style.color = "#dc3545";
+            }
+        } catch (error) {
+            formStatus.innerHTML = "❌ Network error. Message not sent.";
+            formStatus.style.color = "#dc3545"; 
+        }
     });
 }
