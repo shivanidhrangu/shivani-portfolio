@@ -281,7 +281,8 @@ a {
     font-weight: 700;
     line-height: 1.1;
     margin-bottom: 1rem;
-    background: linear-gradient(135deg, var(--text-main), var(--secondary));
+    background: linear-gradient(135deg, var(--text-main), var(--primary));
+    background-clip: text;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
 }
